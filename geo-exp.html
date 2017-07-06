@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Geolocation Experiment</title>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script type="text/javascript">
+    navigator.geolocation.getCurrentPosition(success, error);
+    //you call your functions way earlier than you define them, then,
+    //var/let/const variable will NOT worked
+    //instead, declear function(){}directly
+    //see below
+
+
+
+    
+//have a pop-up window asking if I ALLOW or DENY location
+//if ALLOW - "it worked" should be triggered
+//if DENY "it didn't work" should be triggered
+      function success(position){
+      console.log("It worked!", position);
+      //adding "position" to show more details in log
+      //adding in lat and lng below (from console after a successful return, under position, find coords, and find the two)
+
+      let lat = position.coords.latitude;
+      let lng = position.coords.longtitude;
+      const mapUri = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyAvj9VvY2BwnE5WeKWKWYmzEhqtZnO5tCA`;
+
+      let request = new XMLHttpRequest();
+      request.open("GET", mapUri, true);
+      request.onload = onloadFunc;
+      request.onerror = onerrorFunc;
+      request.send();
+    }
+
+
+    function error(){
+      console.log("It didn't work...")
+    }
+
+
+
+    function onloadFunc(){
+    //onload callback
+    const resp = JSON.parse(this.response)
+    console.log(resp);
+      if(resp.results.length>0){
+      //response.results.length >0
+        document.getElementById("container").innerHTML = resp.results[0].formatted_address
+        //print first result's formatted address to page
+
+      //else block; check response.status ?
+    }
+  }
+
+    function onerrorFunc(){
+    //onerror callback
+    console.log("uh oh");
+    //print an error message to the page for user
+   }
+
+   </script>
+  </body>
+</html>
